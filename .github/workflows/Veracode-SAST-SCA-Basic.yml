@@ -1,0 +1,31 @@
+name: Veracode Static Analysis Demo
+on: workflow_dispatch
+    
+jobs:
+  static_analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out main branch
+        uses: actions/checkout@v2
+        
+      - name: Build with Maven # Compiling the .war binary from the checked out repo source code to upload to the scanner in the next step
+        run: mvn -B package --file app/pom.xml
+
+      - name: Veracode Software Composition Analysis # Perform agent-based Veracode SCA scan
+        env:
+          SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
+        uses: veracode/veracode-sca@v2.1.10
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          create-issues: false   
+
+      - name: Veracode Upload And Scan # Perform a Veracode SAST and SCA scan
+        uses: veracode/veracode-uploadandscan-action@0.2.7
+        with:
+          appname: 'Verademo GitHub Action'
+          createprofile: true
+          filepath: 'app/target/verademo.war'
+          vid: '${{ secrets.API_ID }}'
+          vkey: '${{ secrets.API_KEY }}'
