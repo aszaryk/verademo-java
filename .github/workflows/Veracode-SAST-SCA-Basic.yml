@@ -3,7 +3,7 @@ on: workflow_dispatch
     
 jobs:
   static_analysis:
-    name: Static Analysis
+    name: Veracode SAST and SCA Analysis
     runs-on: ubuntu-latest
     
     steps:
@@ -19,6 +19,7 @@ jobs:
         uses: veracode/veracode-sca@v2.1.10
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: app/
           create-issues: false   
 
       - name: Veracode Upload And Scan # Perform a Veracode SAST and SCA scan
