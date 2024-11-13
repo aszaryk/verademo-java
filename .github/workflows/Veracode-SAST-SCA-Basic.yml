@@ -23,6 +23,7 @@ jobs:
           create-issues: false   
 
       - name: Veracode Upload And Scan # Perform a Veracode SAST and SCA scan
+        if: always()
         uses: veracode/veracode-uploadandscan-action@0.2.7
         with:
           appname: 'Verademo GitHub Action'
